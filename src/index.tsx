@@ -209,13 +209,12 @@ const getModalId = (modal: string | React.FC<any>): string => {
 
 /** omit id and partial all required props */
 type NiceModalArgs<T> = T extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
-  ? Partial<Omit<React.ComponentProps<T>, 'id'>>
+  ? Omit<React.ComponentProps<T>, 'id'>
   : Record<string, unknown>;
 
-export function show<T extends any>(modal: React.FC<any>, args?: NiceModalArgs<React.FC<any>>): Promise<T>;
-export function show<T extends any>(modal: string, args?: Record<string, unknown>): Promise<T>;
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function show(modal: React.FC<any> | string, args?: NiceModalArgs<React.FC<any>> | Record<string, unknown>) {
+export function show<T extends string>(modal: T, args?: Record<string, unknown>): Promise<unknown>;
+export function show<T extends React.FC<any>>(modal: T, args?: NiceModalArgs<T>): Promise<unknown>;
+export function show<T>(modal: React.FC<T> | string, args: NiceModalArgs<React.FC<T>> | Record<string, unknown>) {
   const modalId = getModalId(modal);
   if (typeof modal !== 'string' && !MODAL_REGISTRY[modalId]) {
     register(modalId, modal as React.FC);
